@@ -1,0 +1,76 @@
+{
+  "name": "branchflow",
+  "displayName": "BranchFlow",
+  "description": "Policy-driven Git workflow extension",
+  "version": "0.0.1",
+  "scripts": {
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "vscode:prepublish": "npm run compile"
+  },
+  "devDependencies": {
+    "@types/node": "^25.5.0",
+    "@types/vscode": "^1.110.0",
+    "typescript": "^6.0.2"
+  },
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "main": "./out/extension.js",
+  "activationEvents": [
+    "onCommand:branchflow.initializeProject",
+    "onCommand:branchflow.reloadPolicy",
+    "onCommand:branchflow.showCurrentState",
+    "onCommand:branchflow.startFeature",
+    "onCommand:branchflow.finishFeature",
+    "onCommand:branchflow.startRelease",
+    "onCommand:branchflow.finishRelease",
+    "onCommand:branchflow.startHotfix",
+    "onCommand:branchflow.finishHotfix",
+    "onCommand:branchflow.promoteBranch"
+  ],
+  "contributes": {
+    "commands": [
+      {
+        "command": "branchflow.initializeProject",
+        "title": "BranchFlow: Initialize Project"
+      },
+      {
+        "command": "branchflow.reloadPolicy",
+        "title": "BranchFlow: Reload Policy"
+      },
+      {
+        "command": "branchflow.showCurrentState",
+        "title": "BranchFlow: Show Current State"
+      },
+      {
+        "command": "branchflow.startFeature",
+        "title": "BranchFlow: Start Feature"
+      },
+      {
+        "command": "branchflow.finishFeature",
+        "title": "BranchFlow: Finish Feature"
+      },
+      {
+        "command": "branchflow.startRelease",
+        "title": "BranchFlow: Start Release"
+      },
+      {
+        "command": "branchflow.finishRelease",
+        "title": "BranchFlow: Finish Release"
+      },
+      {
+        "command": "branchflow.startHotfix",
+        "title": "BranchFlow: Start Hotfix"
+      },
+      {
+        "command": "branchflow.finishHotfix",
+        "title": "BranchFlow: Finish Hotfix"
+      },
+      {
+        "command": "branchflow.promoteBranch",
+        "title": "BranchFlow: Promote Branch"
+      }
+    ]
+  }
+}

@@ -1,0 +1,1 @@
+{"version":3,"file":"finishRelease.js","sourceRoot":"","sources":["../../src/commands/finishRelease.ts"],"names":[],"mappings":";;AAGA,sCAQC;AAVD,qCAAqE;AAE9D,KAAK,UAAU,aAAa,CACjC,OAAgC;IAEhC,IAAI,CAAC;QACH,MAAM,IAAA,gCAAuB,EAAC,OAAO,EAAE,SAAS,EAAE,eAAe,CAAC,CAAC;IACrE,CAAC;IAAC,OAAO,KAAK,EAAE,CAAC;QACf,MAAM,IAAA,yBAAgB,EAAC,KAAK,EAAE,yCAAyC,CAAC,CAAC;IAC3E,CAAC;AACH,CAAC"}

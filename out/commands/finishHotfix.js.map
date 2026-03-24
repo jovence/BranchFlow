@@ -1,0 +1,1 @@
+{"version":3,"file":"finishHotfix.js","sourceRoot":"","sources":["../../src/commands/finishHotfix.ts"],"names":[],"mappings":";;AAGA,oCAQC;AAVD,qCAAqE;AAE9D,KAAK,UAAU,YAAY,CAChC,OAAgC;IAEhC,IAAI,CAAC;QACH,MAAM,IAAA,gCAAuB,EAAC,OAAO,EAAE,QAAQ,EAAE,cAAc,CAAC,CAAC;IACnE,CAAC;IAAC,OAAO,KAAK,EAAE,CAAC;QACf,MAAM,IAAA,yBAAgB,EAAC,KAAK,EAAE,wCAAwC,CAAC,CAAC;IAC1E,CAAC;AACH,CAAC"}
