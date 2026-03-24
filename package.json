@@ -18,6 +18,7 @@
   },
   "main": "./out/extension.js",
   "activationEvents": [
+    "onView:branchflow.dashboard",
     "onCommand:branchflow.initializeProject",
     "onCommand:branchflow.reloadPolicy",
     "onCommand:branchflow.showCurrentState",
@@ -27,9 +28,27 @@
     "onCommand:branchflow.finishRelease",
     "onCommand:branchflow.startHotfix",
     "onCommand:branchflow.finishHotfix",
-    "onCommand:branchflow.promoteBranch"
+    "onCommand:branchflow.promoteBranch",
+    "onCommand:branchflow.refreshSidebar"
   ],
   "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "branchflow",
+          "title": "BranchFlow",
+          "icon": "media/branchflow-activity.svg"
+        }
+      ]
+    },
+    "views": {
+      "branchflow": [
+        {
+          "id": "branchflow.dashboard",
+          "name": "Command Center"
+        }
+      ]
+    },
     "commands": [
       {
         "command": "branchflow.initializeProject",
@@ -70,6 +89,10 @@
       {
         "command": "branchflow.promoteBranch",
         "title": "BranchFlow: Promote Branch"
+      },
+      {
+        "command": "branchflow.refreshSidebar",
+        "title": "BranchFlow: Refresh Sidebar"
       }
     ]
   }

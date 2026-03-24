@@ -46,9 +46,28 @@ const showCurrentState_1 = require("./commands/showCurrentState");
 const startFeature_1 = require("./commands/startFeature");
 const startHotfix_1 = require("./commands/startHotfix");
 const startRelease_1 = require("./commands/startRelease");
+const sidebarProvider_1 = require("./ui/sidebarProvider");
 function activate(context) {
     console.log('BranchFlow extension activated');
-    context.subscriptions.push(vscode.commands.registerCommand('branchflow.initializeProject', () => (0, initializeProject_1.initializeProject)()), vscode.commands.registerCommand('branchflow.reloadPolicy', () => (0, reloadPolicy_1.reloadPolicy)()), vscode.commands.registerCommand('branchflow.showCurrentState', () => (0, showCurrentState_1.showCurrentState)()), vscode.commands.registerCommand('branchflow.startFeature', () => (0, startFeature_1.startFeature)(context)), vscode.commands.registerCommand('branchflow.finishFeature', () => (0, finishFeature_1.finishFeature)(context)), vscode.commands.registerCommand('branchflow.startRelease', () => (0, startRelease_1.startRelease)(context)), vscode.commands.registerCommand('branchflow.finishRelease', () => (0, finishRelease_1.finishRelease)(context)), vscode.commands.registerCommand('branchflow.startHotfix', () => (0, startHotfix_1.startHotfix)(context)), vscode.commands.registerCommand('branchflow.finishHotfix', () => (0, finishHotfix_1.finishHotfix)(context)), vscode.commands.registerCommand('branchflow.promoteBranch', () => (0, promoteBranch_1.promoteBranch)()));
+    const sidebarProvider = new sidebarProvider_1.BranchFlowSidebarProvider();
+    // Every command flows through the same wrapper so the sidebar stays fresh after
+    // a branch change, policy edit, or merge operation.
+    const registerCommand = (commandId, handler) => {
+        return vscode.commands.registerCommand(commandId, async () => {
+            try {
+                return await handler();
+            }
+            finally {
+                await sidebarProvider.refresh();
+            }
+        });
+    };
+    context.subscriptions.push(sidebarProvider, vscode.window.registerWebviewViewProvider(sidebarProvider_1.BranchFlowSidebarProvider.viewType, sidebarProvider, {
+        webviewOptions: {
+            retainContextWhenHidden: true
+        }
+    }), registerCommand('branchflow.initializeProject', () => (0, initializeProject_1.initializeProject)()), registerCommand('branchflow.reloadPolicy', () => (0, reloadPolicy_1.reloadPolicy)()), registerCommand('branchflow.showCurrentState', () => (0, showCurrentState_1.showCurrentState)()), registerCommand('branchflow.startFeature', () => (0, startFeature_1.startFeature)(context)), registerCommand('branchflow.finishFeature', () => (0, finishFeature_1.finishFeature)(context)), registerCommand('branchflow.startRelease', () => (0, startRelease_1.startRelease)(context)), registerCommand('branchflow.finishRelease', () => (0, finishRelease_1.finishRelease)(context)), registerCommand('branchflow.startHotfix', () => (0, startHotfix_1.startHotfix)(context)), registerCommand('branchflow.finishHotfix', () => (0, finishHotfix_1.finishHotfix)(context)), registerCommand('branchflow.promoteBranch', () => (0, promoteBranch_1.promoteBranch)()), registerCommand('branchflow.refreshSidebar', () => sidebarProvider.refresh()));
+    void sidebarProvider.refresh();
 }
 function deactivate() { }
 //# sourceMappingURL=extension.js.map

@@ -5,8 +5,18 @@ const githubProvider_1 = require("./githubProvider");
 const gitlabProvider_1 = require("./gitlabProvider");
 class ProviderDetector {
     static detectProvider(policy, remoteUrl) {
-        if (policy.provider.type === 'github' || policy.provider.type === 'gitlab') {
-            return policy.provider.type;
+        return this.detectProviderType(policy.provider.type, remoteUrl);
+    }
+    static createProvider(policy, remoteUrl) {
+        const providerType = this.detectProvider(policy, remoteUrl);
+        if (providerType === 'github') {
+            return new githubProvider_1.GitHubProvider(remoteUrl);
+        }
+        return new gitlabProvider_1.GitLabProvider(remoteUrl);
+    }
+    static detectProviderType(providerType, remoteUrl) {
+        if (providerType === 'github' || providerType === 'gitlab') {
+            return providerType;
         }
         if (!remoteUrl) {
             throw new Error('Provider auto-detection requires a remote URL.');
@@ -19,13 +29,6 @@ class ProviderDetector {
             return 'gitlab';
         }
         throw new Error(`Could not auto-detect provider from remote URL: ${remoteUrl}`);
-    }
-    static createProvider(policy, remoteUrl) {
-        const providerType = this.detectProvider(policy, remoteUrl);
-        if (providerType === 'github') {
-            return new githubProvider_1.GitHubProvider(remoteUrl);
-        }
-        return new gitlabProvider_1.GitLabProvider(remoteUrl);
     }
 }
 exports.ProviderDetector = ProviderDetector;

@@ -44,6 +44,7 @@ BranchFlow currently focuses on:
 
 - project initialization
 - policy reloading and validation
+- a visual workflow dashboard in the Activity Bar
 - current-state inspection
 - feature branch start and finish
 - release branch start and finish
@@ -72,7 +73,7 @@ Most workflow tools are opinionated around one fixed model. BranchFlow exists so
 
 ## Current Status
 
-BranchFlow is currently a command-palette-first extension with a strong v1 foundation.
+BranchFlow is currently a command-palette-plus-sidebar extension with a strong v1 foundation.
 
 What is already implemented:
 
@@ -80,6 +81,7 @@ What is already implemented:
 - branch classification
 - action resolution
 - Git command integration
+- Activity Bar command center
 - feature, release, and hotfix start and finish flows
 - promotion flow
 - GitHub and GitLab URL-based PR/MR assistance
@@ -87,7 +89,6 @@ What is already implemented:
 
 What is not implemented yet:
 
-- a sidebar or tree view
 - direct provider API integration
 - automatic branch push before PR/MR creation
 - release tagging and release notes
@@ -209,6 +210,24 @@ BranchFlow currently exposes the following VS Code commands:
 | `BranchFlow: Start Hotfix` | Create a new hotfix branch from an allowed source branch |
 | `BranchFlow: Finish Hotfix` | Finish the current hotfix branch back into its remembered base branch |
 | `BranchFlow: Promote Branch` | Promote the current branch into the next allowed branch in the configured promotion flow |
+| `BranchFlow: Refresh Sidebar` | Refresh the BranchFlow Activity Bar dashboard |
+
+### Activity Bar UI
+
+BranchFlow now includes a dedicated Activity Bar entry named `BranchFlow`.
+
+The sidebar acts as a workflow command center and shows:
+
+- current branch
+- policy status
+- working tree status
+- branch type
+- workspace and policy location
+- provider and remote details
+- validation issues
+- buttons for actions that are currently available
+
+The sidebar and the `Show Current State` command both render from the same state snapshot, so the visual UI and the output-channel diagnostics stay aligned.
 
 ### `Show Current State`
 
@@ -775,7 +794,7 @@ Abstracts GitHub and GitLab behavior behind a shared interface.
 
 #### `ui`
 
-Contains reusable prompts and state formatting logic used by commands.
+Contains reusable prompts, state formatting logic, and the Activity Bar dashboard UI.
 
 #### `commands`
 
@@ -803,7 +822,7 @@ npm run compile
 2. Press `F5`
 3. This launches an Extension Development Host
 4. Open a Git repository in that window
-5. Run BranchFlow commands from the Command Palette
+5. Use either the BranchFlow Activity Bar dashboard or the Command Palette
 
 ### Build Scripts
 
@@ -878,10 +897,6 @@ Because metadata is stored in `workspaceState`:
 - it is not stored in Git
 - it may not survive every environment or machine move
 
-### No Sidebar Yet
-
-The current UX is command-palette-first. A future sidebar can present current state and available actions more visually.
-
 ### Release / Hotfix Advanced Automation Is Not Implemented Yet
 
 BranchFlow does not yet handle advanced scenarios like:
@@ -912,6 +927,7 @@ Possible next steps for BranchFlow:
 - advanced promotion checks
 - persisted branch metadata strategies beyond `workspaceState`
 - tests for policy rules, command behavior, and Git interactions
+- richer dashboard widgets and repo insights
 
 ## Summary
 

@@ -10,8 +10,25 @@ export class ProviderDetector {
     policy: BranchFlowPolicy,
     remoteUrl?: string
   ): DetectedProviderType {
-    if (policy.provider.type === 'github' || policy.provider.type === 'gitlab') {
-      return policy.provider.type;
+    return this.detectProviderType(policy.provider.type, remoteUrl);
+  }
+
+  public static createProvider(policy: BranchFlowPolicy, remoteUrl: string): GitProvider {
+    const providerType = this.detectProvider(policy, remoteUrl);
+
+    if (providerType === 'github') {
+      return new GitHubProvider(remoteUrl);
+    }
+
+    return new GitLabProvider(remoteUrl);
+  }
+
+  public static detectProviderType(
+    providerType: ProviderType,
+    remoteUrl?: string
+  ): DetectedProviderType {
+    if (providerType === 'github' || providerType === 'gitlab') {
+      return providerType;
     }
 
     if (!remoteUrl) {
@@ -29,15 +46,5 @@ export class ProviderDetector {
     }
 
     throw new Error(`Could not auto-detect provider from remote URL: ${remoteUrl}`);
-  }
-
-  public static createProvider(policy: BranchFlowPolicy, remoteUrl: string): GitProvider {
-    const providerType = this.detectProvider(policy, remoteUrl);
-
-    if (providerType === 'github') {
-      return new GitHubProvider(remoteUrl);
-    }
-
-    return new GitLabProvider(remoteUrl);
   }
 }

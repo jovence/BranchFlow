@@ -35,86 +35,28 @@ var __importStar = (this && this.__importStar) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.showCurrentState = showCurrentState;
 const vscode = __importStar(require("vscode"));
-const actionResolver_1 = require("../core/actionResolver");
-const branchClassifier_1 = require("../core/branchClassifier");
-const policyLoader_1 = require("../core/policyLoader");
-const policyValidator_1 = require("../core/policyValidator");
-const gitService_1 = require("../git/gitService");
-const providerDetector_1 = require("../providers/providerDetector");
-const shared_1 = require("./shared");
+const currentStateService_1 = require("../core/currentStateService");
 const stateFormatter_1 = require("../ui/stateFormatter");
 const outputChannel = vscode.window.createOutputChannel('BranchFlow');
 async function showCurrentState() {
     outputChannel.clear();
     try {
-        const workspaceFolder = (0, shared_1.requireWorkspaceFolder)();
-        const isGitRepo = await gitService_1.GitService.isGitRepo();
-        const summary = {
-            workspacePath: workspaceFolder.uri.fsPath,
-            gitRepository: isGitRepo,
-            policyPath: policyLoader_1.PolicyLoader.getPolicyPath() ?? undefined,
-            policyStatus: 'Not loaded',
-            availableActions: ['reloadPolicy', 'showCurrentState']
-        };
-        if (!isGitRepo) {
-            summary.policyStatus = 'Unavailable because the workspace is not a Git repository';
-            outputChannel.appendLine(stateFormatter_1.StateFormatter.format(summary));
-            outputChannel.show(true);
+        const summary = await currentStateService_1.CurrentStateService.resolve();
+        outputChannel.appendLine(stateFormatter_1.StateFormatter.format(summary));
+        outputChannel.show(true);
+        if (!summary.workspacePath) {
+            await vscode.window.showErrorMessage('BranchFlow needs an open workspace folder.');
+            return;
+        }
+        if (!summary.gitRepository) {
             await vscode.window.showErrorMessage('BranchFlow only works inside a Git repository.');
             return;
         }
-        const currentBranch = await gitService_1.GitService.getCurrentBranch();
-        const isWorkingTreeClean = await gitService_1.GitService.isWorkingTreeClean();
-        const policyExists = policyLoader_1.PolicyLoader.policyExists();
-        let branchType;
-        let validationErrors = [];
-        let availableActions = ['reloadPolicy', 'showCurrentState'];
-        let provider = 'Unavailable';
-        summary.currentBranch = currentBranch;
-        summary.workingTreeClean = isWorkingTreeClean;
-        if (policyExists) {
-            try {
-                const policy = policyLoader_1.PolicyLoader.loadPolicy();
-                branchType = branchClassifier_1.BranchClassifier.classify(currentBranch, policy);
-                validationErrors = policyValidator_1.PolicyValidator.validate(policy);
-                availableActions =
-                    validationErrors.length === 0
-                        ? actionResolver_1.ActionResolver.getAvailableActions(currentBranch, branchType, policy)
-                        : ['reloadPolicy', 'showCurrentState'];
-                try {
-                    const remoteUrl = await gitService_1.GitService.getRemoteUrl(policy.provider.remoteName);
-                    provider = providerDetector_1.ProviderDetector.detectProvider(policy, remoteUrl);
-                }
-                catch {
-                    provider =
-                        policy.provider.type === 'auto' ? 'auto (remote unresolved)' : policy.provider.type;
-                }
-                summary.branchType = branchType;
-                summary.isProtected = branchType === 'protected';
-                summary.remoteName = policy.provider.remoteName;
-                summary.provider = provider;
-                summary.policyStatus = validationErrors.length === 0 ? 'Valid' : 'Invalid';
-            }
-            catch (error) {
-                const message = error instanceof Error ? error.message : 'Unknown policy loading error.';
-                summary.policyStatus = `Invalid (${message})`;
-            }
-        }
-        else {
-            summary.policyStatus = 'Missing';
-            availableActions = ['initializeProject', 'reloadPolicy', 'showCurrentState'];
-        }
-        summary.branchType = summary.branchType ?? branchType;
-        summary.isProtected = summary.isProtected ?? branchType === 'protected';
-        summary.availableActions = availableActions;
-        summary.validationErrors = validationErrors.length > 0 ? validationErrors : undefined;
-        outputChannel.appendLine(stateFormatter_1.StateFormatter.format(summary));
-        outputChannel.show(true);
-        if (validationErrors.length > 0) {
-            await vscode.window.showWarningMessage(`BranchFlow: ${currentBranch} (${branchType ?? 'unknown'}) with policy warnings.`);
+        if (summary.validationErrors && summary.validationErrors.length > 0) {
+            await vscode.window.showWarningMessage(`BranchFlow: ${summary.currentBranch ?? 'unknown'} (${summary.branchType ?? 'unknown'}) with policy warnings.`);
             return;
         }
-        await vscode.window.showInformationMessage(`BranchFlow: ${currentBranch} (${branchType ?? 'unknown'})`);
+        await vscode.window.showInformationMessage(`BranchFlow: ${summary.currentBranch ?? 'unknown'} (${summary.branchType ?? 'unknown'})`);
     }
     catch (error) {
         const message = error instanceof Error ? error.message : 'Unexpected error while reading state.';
